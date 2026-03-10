@@ -7,8 +7,9 @@ use Illuminate\Http\Request;
 class GameController extends Controller
 {
     private $categories = [
-        'Animal' => ['Lion', 'Monkey', 'Cat'],
-        'Programming' => ['Java', 'Python', 'Javascript']
+        'Animal' => ['Lion', 'Monkey', 'Cat', 'Dog', 'Elephant', 'Giraffe', 'Zebra', 'Kangaroo', 'Panda', 'Dolphin'],
+        'Programming' => ['Java', 'Python', 'Javascript', 'Ruby', 'PHP', 'Csharp', 'Go', 'Swift', 'Kotlin', 'Rust'],
+        'Food' => ['Pizza', 'Burger', 'Pasta', 'Sushi', 'Taco', 'Salad', 'Steak', 'Ice Cream', 'Sandwich']
     ];
 
     public function index()
@@ -39,52 +40,73 @@ class GameController extends Controller
     public function guessLetter(Request $request)
     {
         $letter = strtolower($request->input('letter'));
-
-        // Validate input is a single letter
-        $request->validate([
-            'letter' => 'required|string|size:1|regex:/^[a-z]$/i'
-        ]);
-
         $actualWord = strtolower(session('word'));
+        
+        // Validate: only single letter
+        if (strlen($letter) !== 1 || !ctype_alpha($letter)) {
+            session()->flash('letterError', 'Please enter a single letter only.');
+            return redirect()->route('game.index');
+        }
+
         $guessedLetters = session('guessed_letters', []);
-        $hint = session('hint');
+        $incorrectLetters = session('incorrect_letters', []);
+        $mistakes = session('mistakes', 0);
 
-        // Check if letter already guessed
+        // Check if letter was already guessed
         if (in_array($letter, $guessedLetters)) {
-            session()->flash('letter_error', 'You already guessed this letter!');
-        } elseif (strpos($actualWord, $letter) !== false) {
-            // Letter is in the word - update hint
-            $guessedLetters[] = $letter;
-            $hint = $this->updateHint($actualWord, $guessedLetters);
-            session(['guessed_letters' => $guessedLetters, 'hint' => $hint]);
-            session()->flash('letter_status', "Correct! The letter '$letter' is in the word! 🎉");
+            session()->flash('letterError', 'You already guessed this letter!');
+            return redirect()->route('game.index');
+        }
 
-            // Check if word is complete
-            if (strpos($hint, '_') === false) {
-                session()->flash('status', 'Congratulations! You found the word: ' . session('word') . ' 🎊');
-                $this->reset();
-            }
-        } else {
-            // Letter is not in the word
+        if (strpos($actualWord, $letter) !== false) {
+            // Correct letter - add to guessed letters and update hint
             $guessedLetters[] = $letter;
             session(['guessed_letters' => $guessedLetters]);
-            session()->flash('letter_error', "Wrong! The letter '$letter' is not in the word. ❌");
+            
+            // Update hint
+            $this->updateHint();
+            
+            // Check if word is complete
+            $hint = session('hint');
+            if (strpos($hint, '_') === false) {
+                session()->flash('status', 'Correct! It was ' . session('word') . ' 🎉');
+                $this->reset();
+            } else {
+                session()->flash('letterStatus', '✓ Correct! "' . strtoupper($letter) . '" is in the word.');
+            }
+        } else {
+            // Wrong letter
+            $incorrectLetters[] = $letter;
+            $guessedLetters[] = $letter;
+            $mistakes++;
+            session(['guessed_letters' => $guessedLetters, 'incorrect_letters' => $incorrectLetters, 'mistakes' => $mistakes]);
+            
+            if ($mistakes >= 6) {
+                session()->flash('gameOver', 'Game Over! The word was: ' . session('word'));
+                $this->reset();
+            } else {
+                session()->flash('letterError', '✗ Wrong! "' . strtoupper($letter) . '" is not in the word. (Mistakes: ' . $mistakes . '/6)');
+            }
         }
 
         return redirect()->route('game.index');
     }
 
-    private function updateHint($word, $guessedLetters)
+    private function updateHint()
     {
+        $word = strtolower(session('word'));
+        $guessedLetters = session('guessed_letters', []);
         $hint = '';
+
         for ($i = 0; $i < strlen($word); $i++) {
             if (in_array($word[$i], $guessedLetters)) {
-                $hint .= $word[$i] . ' ';
+                $hint .= strtoupper($word[$i]) . ' ';
             } else {
                 $hint .= '_ ';
             }
         }
-        return $hint;
+
+        session(['hint' => $hint]);
     }
 
     public function reset()
@@ -97,7 +119,9 @@ class GameController extends Controller
             'word' => $word,
             'category' => $categoryName,
             'hint' => str_repeat('_ ', strlen($word)),
-            'guessed_letters' => []
+            'guessed_letters' => [],
+            'incorrect_letters' => [],
+            'mistakes' => 0
         ]);
 
         return redirect()->route('game.index');
