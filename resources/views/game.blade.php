@@ -73,40 +73,42 @@
                 
                 <!-- On-Screen Keyboard -->
                 <div class="mt-4 p-3 bg-gray-50 rounded">
-                    <div class="grid grid-cols-7 gap-1">
-                        @php
-                            $guessedLetters = session('guessed_letters', []);
-                            $incorrectLetters = session('incorrect_letters', []);
-                        @endphp
-                        
-                        @foreach(range('A', 'Z') as $letter)
-                            @php
-                                $isGuessed = in_array(strtolower($letter), $guessedLetters);
-                                $isIncorrect = in_array(strtolower($letter), $incorrectLetters);
-                            @endphp
-                            
-                            @if($isGuessed)
-                                @if($isIncorrect)
-                                    <button type="button" disabled 
-                                            class="p-1.5 text-xs font-bold rounded bg-red-300 text-red-700 cursor-not-allowed opacity-50 line-through">
-                                        {{ $letter }}
-                                    </button>
+                    @php
+                        $guessedLetters = session('guessed_letters', []);
+                        $incorrectLetters = session('incorrect_letters', []);
+                    @endphp
+                    
+                    @foreach($keyboardRows as $row)
+                        <div class="flex gap-1 justify-center mb-1">
+                            @foreach($row as $letter)
+                                @php
+                                    $isGuessed = in_array(strtolower($letter), $guessedLetters);
+                                    $isIncorrect = in_array(strtolower($letter), $incorrectLetters);
+                                @endphp
+                                
+                                @if($isGuessed)
+                                    @if($isIncorrect)
+                                        <button type="button" disabled 
+                                                class="px-2 py-1 text-xs font-bold rounded bg-red-300 text-red-700 cursor-not-allowed opacity-50 line-through">
+                                            {{ $letter }}
+                                        </button>
+                                    @else
+                                        <button type="button" disabled 
+                                                class="px-2 py-1 text-xs font-bold rounded bg-green-300 text-green-700 cursor-not-allowed opacity-75">
+                                            {{ $letter }}
+                                        </button>
+                                    @endif
                                 @else
-                                    <button type="button" disabled 
-                                            class="p-1.5 text-xs font-bold rounded bg-green-300 text-green-700 cursor-not-allowed opacity-75">
+                                    <button type="button" 
+                                            onclick="guessLetterClick('{{ strtolower($letter) }}')"
+                                            {{ $isGameOver ? 'disabled' : '' }}
+                                            class="px-2 py-1 text-xs font-bold rounded bg-blue-400 text-white hover:bg-blue-500 transition active:scale-95 {{ $isGameOver ? 'cursor-not-allowed opacity-50' : '' }}">
                                         {{ $letter }}
                                     </button>
                                 @endif
-                            @else
-                                <button type="button" 
-                                        onclick="guessLetterClick('{{ strtolower($letter) }}')"
-                                        {{ $isGameOver ? 'disabled' : '' }}
-                                        class="p-1.5 text-xs font-bold rounded bg-blue-400 text-white hover:bg-blue-500 transition active:scale-95 {{ $isGameOver ? 'cursor-not-allowed opacity-50' : '' }}">
-                                    {{ $letter }}
-                                </button>
-                            @endif
-                        @endforeach
-                    </div>
+                            @endforeach
+                        </div>
+                    @endforeach
                 </div>
                 
                 <button type="submit" {{ $isGameOver ? 'disabled' : '' }} class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition font-semibold {{ $isGameOver ? 'cursor-not-allowed opacity-50' : '' }}">

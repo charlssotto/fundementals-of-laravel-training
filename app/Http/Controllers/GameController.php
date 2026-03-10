@@ -12,6 +12,12 @@ class GameController extends Controller
         'Food' => ['Pizza', 'Burger', 'Pasta', 'Sushi', 'Taco', 'Salad', 'Steak', 'Ice Cream', 'Sandwich']
     ];
 
+    private $keyboardRows = [
+        'row1' => ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+        'row2' => ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+        'row3' => ['Z', 'X', 'C', 'V', 'B', 'N', 'M']
+    ];
+
     public function index()
     {
         // If no word is picked, start a new game
@@ -19,7 +25,7 @@ class GameController extends Controller
             $this->reset();
         }
 
-        return view('game');
+        return view('game', ['keyboardRows' => $this->keyboardRows]);
     }
 
     public function guess(Request $request)
