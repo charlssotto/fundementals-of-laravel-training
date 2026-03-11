@@ -3,7 +3,18 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [App\Http\Controllers\GameController::class, 'index'])->name('game.index');
-Route::post('/guess', [App\Http\Controllers\GameController::class, 'guess'])->name('game.guess');
-Route::post('/guess-letter', [App\Http\Controllers\GameController::class, 'guessLetter'])->name('game.guessLetter');
-Route::get('/reset', [App\Http\Controllers\GameController::class, 'reset'])->name('game.reset');
+// Public routes
+Route::get('/', [App\Http\Controllers\LoginController::class, 'show'])->name('login');
+Route::get('/login', [App\Http\Controllers\LoginController::class, 'show'])->name('login.show');
+Route::post('/login', [App\Http\Controllers\LoginController::class, 'authenticate'])->name('login.authenticate');
+Route::get('/register', [App\Http\Controllers\RegisterController::class, 'show'])->name('register.show');
+Route::post('/register', [App\Http\Controllers\RegisterController::class, 'save'])->name('register.save');
+
+// Protected routes (require authentication)
+Route::middleware('auth')->group(function () {
+    Route::get('/game', [App\Http\Controllers\GameController::class, 'index'])->name('game.index');
+    Route::post('/guess', [App\Http\Controllers\GameController::class, 'guess'])->name('game.guess');
+    Route::post('/guess-letter', [App\Http\Controllers\GameController::class, 'guessLetter'])->name('game.guessLetter');
+    Route::get('/reset', [App\Http\Controllers\GameController::class, 'reset'])->name('game.reset');
+    Route::get('/logout', [App\Http\Controllers\LoginController::class, 'logout'])->name('logout');
+});
