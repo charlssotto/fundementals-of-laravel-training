@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GameSession;
 use Illuminate\Http\Request;
 
 class GameController extends Controller
@@ -57,6 +58,8 @@ class GameController extends Controller
         $guessedLetters = session('guessed_letters', []);
         $incorrectLetters = session('incorrect_letters', []);
         $mistakes = session('mistakes', 0);
+        $lives = session('lives', 3);
+        $gameSessionId = session('game_session_id');
 
         // Check if letter was already guessed
         if (in_array($letter, $guessedLetters)) {
@@ -88,8 +91,27 @@ class GameController extends Controller
             session(['guessed_letters' => $guessedLetters, 'incorrect_letters' => $incorrectLetters, 'mistakes' => $mistakes]);
             
             if ($mistakes >= 6) {
-                session()->flash('gameOver', 'Game Over! The word was: ' . session('word'));
-                $this->reset();
+                // Deduct one life from game session
+                if ($gameSessionId) {
+                    $gameSession = GameSession::find($gameSessionId);
+                    if ($gameSession) {
+                        $gameSession->deductLife();
+                        $lives = $gameSession->lives;
+                    }
+                }
+                
+                session(['lives' => $lives]);
+
+                if ($lives > 0) {
+                    // Lost this round, but still have lives left
+                    session()->flash('gameOver', 'Game Over! The word was: ' . session('word') . ' ❌ Lives left: ' . $lives);
+                    $this->reset();
+                    return redirect()->route('game.index');
+                } else {
+                    // No lives left - close game session and redirect to dashboard
+                    session()->forget(['word', 'category', 'hint', 'guessed_letters', 'incorrect_letters', 'mistakes', 'lives', 'game_session_id']);
+                    return redirect()->route('game.dashboard')->with('error', 'Game Over! No lives left. Create a new session to play again!');
+                }
             } else {
                 session()->flash('letterError', '✗ Wrong! "' . strtoupper($letter) . '" is not in the word. (Mistakes: ' . $mistakes . '/6)');
             }
@@ -120,6 +142,10 @@ class GameController extends Controller
         $categoryName = array_rand($this->categories);
         $wordList = $this->categories[$categoryName];
         $word = $wordList[array_rand($wordList)];
+        
+        // Preserve lives and game_session_id while resetting the game
+        $lives = session('lives', 3);
+        $gameSessionId = session('game_session_id');
 
         session([
             'word' => $word,
@@ -127,7 +153,9 @@ class GameController extends Controller
             'hint' => str_repeat('_ ', strlen($word)),
             'guessed_letters' => [],
             'incorrect_letters' => [],
-            'mistakes' => 0
+            'mistakes' => 0,
+            'lives' => $lives,
+            'game_session_id' => $gameSessionId
         ]);
 
         return redirect()->route('game.index');

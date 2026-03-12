@@ -26,17 +26,40 @@
         <h2 class="text-lg text-gray-600 mb-2">Session: <span class="font-bold text-blue-600">{{ $gameSession->name }}</span></h2>
         <h1 class="text-2xl font-bold mb-4">Guess the Word!</h1>
         
-        <p class="text-gray-600 mb-2">Category: <span class="font-bold text-blue-600">{{ session('category') }}</span></p>
-        
-        <!-- Mistakes Counter -->
-        <div class="mb-4 p-3 bg-yellow-50 rounded border-2 border-yellow-200">
-            <p class="text-sm font-semibold text-yellow-800">Mistakes: 
-                <span class="text-lg">{{ session('mistakes', 0) }}<span class="text-gray-500">/6</span></span>
-            </p>
-            <div class="w-full bg-yellow-200 rounded-full h-2 mt-2">
-                <div class="bg-yellow-600 h-2 rounded-full transition-all" style="width: {{ (session('mistakes', 0) / 6) * 100 }}%"></div>
+        @if(!$gameSession->isPlayable())
+            <div class="mb-4 p-4 bg-red-100 border-2 border-red-500 rounded text-red-700 font-bold text-lg">
+                ❌ Game Over - No Lives Left!
             </div>
-        </div>
+            <p class="text-gray-600 mb-6">This game session has no lives remaining. Create a new session to play again.</p>
+            <a href="{{ route('game.dashboard') }}" 
+               class="inline-block px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition">
+                Back to Dashboard
+            </a>
+        @else
+            <p class="text-gray-600 mb-2">Category: <span class="font-bold text-blue-600">{{ session('category') }}</span></p>
+            
+            <!-- Lives Counter -->
+            <div class="mb-4 p-3 bg-purple-50 rounded border-2 border-purple-200">
+                <p class="text-sm font-semibold text-purple-800">❤️ Lives: 
+                    <span class="text-lg {{ session('lives', $gameSession->lives) === 0 ? 'text-red-600' : 'text-purple-600' }}">{{ session('lives', $gameSession->lives) }}/3</span>
+                </p>
+                <div class="w-full bg-purple-200 rounded-full h-2 mt-2">
+                    <div class="bg-purple-600 h-2 rounded-full transition-all" style="width: {{ (session('lives', $gameSession->lives) / 3) * 100 }}%"></div>
+                </div>
+            </div>
+            
+            <!-- Mistakes Counter -->
+            <div class="mb-4 p-3 bg-yellow-50 rounded border-2 border-yellow-200">
+                <p class="text-sm font-semibold text-yellow-800">Mistakes: 
+                    <span class="text-lg">{{ session('mistakes', 0) }}<span class="text-gray-500">/6</span></span>
+                </p>
+                <div class="w-full bg-yellow-200 rounded-full h-2 mt-2">
+                    <div class="bg-yellow-600 h-2 rounded-full transition-all" style="width: {{ (session('mistakes', 0) / 6) * 100 }}%"></div>
+                </div>
+            </div>
+        @endif
+        
+        @if($gameSession->isPlayable())
         <div class="text-4xl tracking-widest my-6 font-mono font-bold min-h-16 flex items-center justify-center">
             {{ session('hint') }}
         </div>
@@ -161,6 +184,7 @@
         <a href="{{ route('game.reset') }}" class="block mt-6 text-sm text-gray-400 hover:text-gray-600 underline">
             New Word / Reset
         </a>
+        @endif
     </div>
 </body>
 </html>

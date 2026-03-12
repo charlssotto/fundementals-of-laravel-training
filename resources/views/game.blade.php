@@ -27,6 +27,16 @@
         
         <p class="text-gray-600 mb-2">Category: <span class="font-bold text-blue-600">{{ session('category') }}</span></p>
         
+        <!-- Lives Counter -->
+        <div class="mb-4 p-3 bg-purple-50 rounded border-2 border-purple-200">
+            <p class="text-sm font-semibold text-purple-800">❤️ Lives: 
+                <span class="text-lg {{ session('lives', 3) === 0 ? 'text-red-600' : 'text-purple-600' }}">{{ session('lives', 3) }}/3</span>
+            </p>
+            <div class="w-full bg-purple-200 rounded-full h-2 mt-2">
+                <div class="bg-purple-600 h-2 rounded-full transition-all" style="width: {{ (session('lives', 3) / 3) * 100 }}%"></div>
+            </div>
+        </div>
+        
         <!-- Mistakes Counter -->
         <div class="mb-4 p-3 bg-yellow-50 rounded border-2 border-yellow-200">
             <p class="text-sm font-semibold text-yellow-800">Mistakes: 

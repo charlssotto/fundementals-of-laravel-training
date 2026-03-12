@@ -36,6 +36,11 @@ class GameSessionController extends Controller
         if (auth()->user()->id !== $gameSession->user_id) {
             abort(403, 'Unauthorized access to this game session.');
         }
+
+        // Check if game session still has lives
+        if (!$gameSession->isPlayable()) {
+            return view('game-session.show', compact('gameSession'))->with('error', 'This game session has no lives left. Create a new one to play again!');
+        }
         
         // Initialize game session if not already started
         if (!session()->has('word')) {
@@ -56,7 +61,8 @@ class GameSessionController extends Controller
                 'guessed_letters' => [],
                 'incorrect_letters' => [],
                 'mistakes' => 0,
-                'game_session_id' => $gameSession->id
+                'game_session_id' => $gameSession->id,
+                'lives' => $gameSession->lives
             ]);
         }
         

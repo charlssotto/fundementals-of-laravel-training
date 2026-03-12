@@ -45,11 +45,30 @@
                                 {{ ucfirst($session->status) }}
                             </span>
                         </p>
+                        
+                        <!-- Lives Display -->
+                        <div class="mb-3 p-2 bg-purple-50 rounded border border-purple-200">
+                            <p class="text-sm font-semibold text-purple-700">
+                                ❤️ Lives: <span class="{{ $session->lives === 0 ? 'text-red-600 font-bold' : 'text-purple-600' }}">{{ $session->lives }}/3</span>
+                            </p>
+                            <div class="w-full bg-purple-200 rounded-full h-2 mt-1">
+                                <div class="bg-purple-600 h-2 rounded-full transition-all" style="width: {{ ($session->lives / 3) * 100 }}%"></div>
+                            </div>
+                        </div>
+                        
                         <p class="text-sm text-gray-500 mb-4">Created: {{ $session->created_at->format('M d, Y') }}</p>
-                        <a href="{{ route('game.session.show', $session) }}" 
-                           class="inline-block w-full text-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition font-semibold">
-                            Play Session
-                        </a>
+                        
+                        @if($session->lives > 0)
+                            <a href="{{ route('game.session.show', $session) }}" 
+                               class="inline-block w-full text-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition font-semibold">
+                                Play Session
+                            </a>
+                        @else
+                            <button disabled 
+                                    class="w-full px-4 py-2 bg-gray-300 text-gray-600 rounded cursor-not-allowed font-semibold">
+                                Game Over - No Lives Left
+                            </button>
+                        @endif
                     </div>
                 @endforeach
             </div>
