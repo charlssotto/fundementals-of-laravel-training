@@ -12,6 +12,15 @@ Route::post('/register', [App\Http\Controllers\RegisterController::class, 'save'
 
 // Protected routes (require authentication)
 Route::middleware('auth')->group(function () {
+    // Dashboard
+    Route::get('/dashboard', [App\Http\Controllers\GameSessionController::class, 'dashboard'])->name('game.dashboard');
+    
+    // Game Sessions
+    Route::get('/game-session/create', [App\Http\Controllers\GameSessionController::class, 'create'])->name('game.session.create');
+    Route::post('/game-session', [App\Http\Controllers\GameSessionController::class, 'store'])->name('game.session.store');
+    Route::get('/game-session/{gameSession}', [App\Http\Controllers\GameSessionController::class, 'show'])->name('game.session.show');
+    
+    // Game
     Route::get('/game', [App\Http\Controllers\GameController::class, 'index'])->name('game.index');
     Route::post('/guess', [App\Http\Controllers\GameController::class, 'guess'])->name('game.guess');
     Route::post('/guess-letter', [App\Http\Controllers\GameController::class, 'guessLetter'])->name('game.guessLetter');

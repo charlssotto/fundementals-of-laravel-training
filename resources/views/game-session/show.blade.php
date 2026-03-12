@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laravel Guessing Game</title>
+    <title>{{ $gameSession->name }} - Guessing Game</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
@@ -23,6 +23,7 @@
     </div>
 
     <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center">
+        <h2 class="text-lg text-gray-600 mb-2">Session: <span class="font-bold text-blue-600">{{ $gameSession->name }}</span></h2>
         <h1 class="text-2xl font-bold mb-4">Guess the Word!</h1>
         
         <p class="text-gray-600 mb-2">Category: <span class="font-bold text-blue-600">{{ session('category') }}</span></p>
@@ -88,6 +89,11 @@
                 <!-- On-Screen Keyboard -->
                 <div class="mt-4 p-3 bg-gray-50 rounded">
                     @php
+                        $keyboardRows = [
+                            'row1' => ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+                            'row2' => ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+                            'row3' => ['Z', 'X', 'C', 'V', 'B', 'N', 'M']
+                        ];
                         $guessedLetters = session('guessed_letters', []);
                         $incorrectLetters = session('incorrect_letters', []);
                     @endphp
@@ -156,6 +162,5 @@
             New Word / Reset
         </a>
     </div>
-
 </body>
 </html>
