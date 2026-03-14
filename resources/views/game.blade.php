@@ -6,165 +6,151 @@
     <title>Laravel Guessing Game</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-gray-900 min-h-screen flex items-center justify-center p-4 text-gray-100">
     <div class="absolute top-4 left-4">
         <a href="{{ route('game.dashboard') }}" 
-           class="px-4 py-2 bg-gray-500 text-white rounded-lg font-semibold hover:bg-gray-600 transition">
+           class="px-4 py-2 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-lg font-semibold hover:from-gray-700 hover:to-gray-800 transition shadow-lg">
             ← Back to Dashboard
         </a>
     </div>
 
     <div class="absolute top-4 right-4 flex items-center gap-4">
-        <span class="text-gray-700 font-semibold">👤 {{ Auth::user()->name }}</span>
+        <span class="text-gray-300 font-semibold">👤 {{ Auth::user()->name }}</span>
         <a href="{{ route('logout') }}" 
-           class="px-4 py-2 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition">
+           class="px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg font-semibold hover:from-red-700 hover:to-red-800 transition shadow-lg">
             Logout
         </a>
     </div>
 
-    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center">
-        <h1 class="text-2xl font-bold mb-4">Guess the Word!</h1>
+    <div class="bg-gray-800 p-8 rounded-lg shadow-2xl w-full max-w-6xl border border-gray-700">
+        <h1 class="text-4xl font-bold mb-6 text-center text-white">🎮 Guess the Word! 🎮</h1>
         
-        <p class="text-gray-600 mb-2">Category: <span class="font-bold text-blue-600">{{ session('category') }}</span></p>
-        
-        <!-- Lives Counter -->
-        <div class="mb-4 p-3 bg-purple-50 rounded border-2 border-purple-200">
-            <p class="text-sm font-semibold text-purple-800">❤️ Lives: 
-                <span class="text-lg {{ session('lives', 3) === 0 ? 'text-red-600' : 'text-purple-600' }}">{{ session('lives', 3) }}/3</span>
-            </p>
-            <div class="w-full bg-purple-200 rounded-full h-2 mt-2">
-                <div class="bg-purple-600 h-2 rounded-full transition-all" style="width: {{ (session('lives', 3) / 3) * 100 }}%"></div>
+        <!-- Top Stats Bar -->
+        <div class="grid grid-cols-3 gap-4 mb-6">
+            <div class="text-center p-4 bg-gray-700 rounded-lg border border-gray-600">
+                <p class="text-gray-400 font-semibold text-sm">Category</p>
+                <p class="text-2xl font-bold text-cyan-400 mt-2">{{ session('category') }}</p>
             </div>
-        </div>
-        
-        <!-- Mistakes Counter -->
-        <div class="mb-4 p-3 bg-yellow-50 rounded border-2 border-yellow-200">
-            <p class="text-sm font-semibold text-yellow-800">Mistakes: 
-                <span class="text-lg">{{ session('mistakes', 0) }}<span class="text-gray-500">/6</span></span>
-            </p>
-            <div class="w-full bg-yellow-200 rounded-full h-2 mt-2">
-                <div class="bg-yellow-600 h-2 rounded-full transition-all" style="width: {{ (session('mistakes', 0) / 6) * 100 }}%"></div>
-            </div>
-        </div>
-        <div class="text-4xl tracking-widest my-6 font-mono font-bold min-h-16 flex items-center justify-center">
-            {{ session('hint') }}
-        </div>
-
-        @if(session('status'))
-            <div class="mb-4 p-3 text-green-600 font-bold bg-green-50 rounded">{{ session('status') }}</div>
-        @endif
-
-        @if(session('error'))
-            <div class="mb-4 p-3 text-red-500 bg-red-50 rounded">{{ session('error') }}</div>
-        @endif
-
-        @if(session('gameOver'))
-            <div class="mb-4 p-3 text-white font-bold bg-red-600 rounded text-lg border-2 border-red-800">
-                ☠️ {{ session('gameOver') }}
-            </div>
-        @endif
-
-        <!-- Letter Guessing Section -->
-        <div class="mb-6 border-t pt-6">
-            <h2 class="text-lg font-semibold mb-3 text-gray-700">Guess by Letter</h2>
             
-            @if(session('letterStatus'))
-                <div class="mb-3 p-2 text-green-600 font-semibold bg-green-50 rounded text-sm">
-                    {{ session('letterStatus') }}
+            <!-- Lives Counter -->
+            <div class="p-4 bg-gray-700 rounded-lg border-2 border-purple-500">
+                <p class="text-sm font-semibold text-purple-300 mb-2">❤️ Lives</p>
+                <p class="text-3xl font-bold {{ session('lives', 3) === 0 ? 'text-red-400' : 'text-purple-400' }}">{{ session('lives', 3) }}/3</p>
+                <div class="w-full bg-gray-600 rounded-full h-3 mt-2">
+                    <div class="bg-gradient-to-r from-purple-500 to-purple-600 h-3 rounded-full transition-all" style="width: {{ (session('lives', 3) / 3) * 100 }}%"></div>
                 </div>
+            </div>
+            
+            <!-- Mistakes Counter -->
+            <div class="p-4 bg-gray-700 rounded-lg border-2 border-yellow-500">
+                <p class="text-sm font-semibold text-yellow-300 mb-2">⚠️ Mistakes</p>
+                <p class="text-3xl font-bold">{{ session('mistakes', 0) }}<span class="text-lg text-gray-400">/6</span></p>
+                <div class="w-full bg-gray-600 rounded-full h-3 mt-2">
+                    <div class="bg-gradient-to-r from-yellow-500 to-orange-600 h-3 rounded-full transition-all" style="width: {{ (session('mistakes', 0) / 6) * 100 }}%"></div>
+                </div>
+            </div>
+        </div>
+        <!-- Word Display and Hint -->
+        <div class="grid grid-cols-2 gap-6 mb-8">
+            <div class="flex flex-col justify-center">
+                <div class="text-6xl tracking-widest font-mono font-bold text-center p-6 bg-gray-700 rounded-lg border-3 border-cyan-500 min-h-24 flex items-center justify-center text-cyan-400 shadow-lg">
+                    {{ session('hint') }}
+                </div>
+            </div>
+            
+            <div class="flex flex-col justify-center">
+                @if(session('word_hint'))
+                    <div class="p-5 bg-gray-700 rounded-lg border-2 border-blue-500 h-full flex flex-col justify-center shadow-lg">
+                        <p class="text-sm font-semibold text-blue-300 mb-3">💡 Hint:</p>
+                        <p class="text-blue-200 font-medium text-lg">{{ session('word_hint') }}</p>
+                    </div>
+                @else
+                    <div class="p-5 bg-gray-700 rounded-lg border-2 border-gray-600 shadow-lg"></div>
+                @endif
+            </div>
+        </div>
+
+        <!-- Status Messages -->
+        <div class="mb-6">
+            @if(session('status'))
+                <div class="p-4 text-green-300 font-bold bg-gray-700 rounded-lg border-2 border-green-500 text-center shadow-lg">{{ session('status') }}</div>
             @endif
 
-            @if(session('letterError'))
-                <div class="mb-3 p-2 text-red-500 bg-red-50 rounded text-sm">
-                    {{ session('letterError') }}
-                </div>
+            @if(session('error'))
+                <div class="p-4 text-red-300 bg-gray-700 rounded-lg border-2 border-red-500 text-center shadow-lg">{{ session('error') }}</div>
             @endif
 
-            @php
-                $isGameOver = session('mistakes', 0) >= 6;
-            @endphp
-
-            <form id="letterForm" action="{{ route('game.guessLetter') }}" method="POST" class="space-y-3" {{ $isGameOver ? 'style=opacity:0.5' : '' }}>
-                @csrf
-                <div>
-                    <input type="text" id="letterInput" name="letter" maxlength="1" autofocus required
-                           placeholder="Enter a letter or click below"
-                           class="w-full border-2 border-gray-300 p-2 rounded focus:outline-none focus:border-green-500 text-center text-lg uppercase"
-                           style="letter-spacing: 0.2rem;"
-                           {{ $isGameOver ? 'disabled' : '' }}>
-                    <p class="text-xs text-gray-500 mt-1">A single letter (A-Z)</p>
+            @if(session('gameOver'))
+                <div class="p-4 text-white font-bold bg-gray-700 rounded-lg text-lg border-2 border-red-600 text-center shadow-lg">
+                    ☠️ {{ session('gameOver') }}
                 </div>
+            @endif
+        </div>
+
+        <!-- Guessing Sections -->
+        <div class="grid grid-cols-2 gap-6 mb-6">
+            <!-- Letter Guessing Section -->
+            <div class="border-2 border-gray-600 rounded-lg p-6 bg-gray-700 shadow-lg">
+                <h2 class="text-xl font-semibold mb-4 text-white">🔤 Guess by Letter</h2>
                 
-                <!-- On-Screen Keyboard -->
-                <div class="mt-4 p-3 bg-gray-50 rounded">
-                    @php
-                        $guessedLetters = session('guessed_letters', []);
-                        $incorrectLetters = session('incorrect_letters', []);
-                    @endphp
+                @if(session('letterStatus'))
+                    <div class="mb-3 p-3 text-green-300 font-semibold bg-gray-600 rounded-lg text-sm border border-green-500 shadow-md">
+                        {{ session('letterStatus') }}
+                    </div>
+                @endif
+
+                @if(session('letterError'))
+                    <div class="mb-3 p-3 text-red-300 bg-gray-600 rounded-lg text-sm border border-red-500 shadow-md">
+                        {{ session('letterError') }}
+                    </div>
+                @endif
+
+                @php
+                    $isGameOver = session('mistakes', 0) >= 6;
+                @endphp
+
+                <form id="letterForm" action="{{ route('game.guessLetter') }}" method="POST" class="space-y-3" {{ $isGameOver ? 'style=opacity:0.5' : '' }}>
+                    @csrf
+                    <div>
+                        <input type="text" id="letterInput" name="letter" maxlength="1" autofocus required
+                               placeholder="Enter a letter"
+                               class="w-full border-2 border-gray-500 bg-gray-600 text-white p-3 rounded-lg focus:outline-none focus:border-cyan-400 text-center text-2xl uppercase font-bold placeholder-gray-400"
+                               style="letter-spacing: 0.2rem;"
+                               {{ $isGameOver ? 'disabled' : '' }}>
+                        <p class="text-xs text-gray-400 mt-2">A single letter (A-Z)</p>
+                    </div>
                     
-                    @foreach($keyboardRows as $row)
-                        <div class="flex gap-1 justify-center mb-1">
-                            @foreach($row as $letter)
-                                @php
-                                    $isGuessed = in_array(strtolower($letter), $guessedLetters);
-                                    $isIncorrect = in_array(strtolower($letter), $incorrectLetters);
-                                @endphp
-                                
-                                @if($isGuessed)
-                                    @if($isIncorrect)
-                                        <button type="button" disabled 
-                                                class="px-2 py-1 text-xs font-bold rounded bg-red-300 text-red-700 cursor-not-allowed opacity-50 line-through">
-                                            {{ $letter }}
-                                        </button>
-                                    @else
-                                        <button type="button" disabled 
-                                                class="px-2 py-1 text-xs font-bold rounded bg-green-300 text-green-700 cursor-not-allowed opacity-75">
-                                            {{ $letter }}
-                                        </button>
-                                    @endif
-                                @else
-                                    <button type="button" 
-                                            onclick="guessLetterClick('{{ strtolower($letter) }}')"
-                                            {{ $isGameOver ? 'disabled' : '' }}
-                                            class="px-2 py-1 text-xs font-bold rounded bg-blue-400 text-white hover:bg-blue-500 transition active:scale-95 {{ $isGameOver ? 'cursor-not-allowed opacity-50' : '' }}">
-                                        {{ $letter }}
-                                    </button>
-                                @endif
-                            @endforeach
+                    <button type="submit" {{ $isGameOver ? 'disabled' : '' }} class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 rounded-lg hover:from-green-700 hover:to-green-800 transition font-semibold text-lg {{ $isGameOver ? 'cursor-not-allowed opacity-50' : '' }} shadow-lg">
+                        Guess Letter
+                    </button>
+                </form>
+            </div>
+
+            <!-- Full Word Guess Section -->
+            <div class="border-2 border-gray-600 rounded-lg p-6 bg-gray-700 flex flex-col justify-between shadow-lg">
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 text-white">📝 Or Guess the Full Word</h2>
+                    <form action="{{ route('game.guess') }}" method="POST" class="space-y-4">
+                        @csrf
+                        <div>
+                            <input type="text" name="guess" placeholder="Enter the full word"
+                                   class="w-full border-2 border-gray-500 bg-gray-600 text-white p-3 rounded-lg focus:outline-none focus:border-cyan-400 text-center text-xl font-semibold uppercase placeholder-gray-400">
+                            <p class="text-xs text-gray-400 mt-2">Type the complete word</p>
                         </div>
-                    @endforeach
+                        
+                        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 rounded-lg hover:from-blue-700 hover:to-blue-800 transition font-semibold text-lg shadow-lg">
+                            Submit Full Guess
+                        </button>
+                    </form>
                 </div>
-                
-                <button type="submit" {{ $isGameOver ? 'disabled' : '' }} class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition font-semibold {{ $isGameOver ? 'cursor-not-allowed opacity-50' : '' }}">
-                    Guess Letter
-                </button>
-            </form>
-
-            <script>
-                function guessLetterClick(letter) {
-                    document.getElementById('letterInput').value = letter.toUpperCase();
-                    document.getElementById('letterForm').submit();
-                }
-            </script>
+            </div>
         </div>
 
-        <!-- Full Word Guess Section -->
-        <div class="border-t pt-6">
-            <h2 class="text-lg font-semibold mb-3 text-gray-700">Or Guess the Full Word</h2>
-            <form action="{{ route('game.guess') }}" method="POST" class="space-y-3">
-                @csrf
-                <input type="text" name="guess" placeholder="Enter the full word"
-                       class="w-full border-2 border-gray-300 p-2 rounded focus:outline-none focus:border-blue-500 text-center">
-                
-                <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition font-semibold">
-                    Submit Full Guess
-                </button>
-            </form>
+        <div class="text-center">
+            <a href="{{ route('game.reset') }}" class="text-sm text-gray-400 hover:text-gray-200 underline font-medium transition">
+                🔄 New Word / Reset Game
+            </a>
         </div>
-
-        <a href="{{ route('game.reset') }}" class="block mt-6 text-sm text-gray-400 hover:text-gray-600 underline">
-            New Word / Reset
-        </a>
     </div>
 
 </body>

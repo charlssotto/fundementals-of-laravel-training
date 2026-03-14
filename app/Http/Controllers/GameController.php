@@ -13,6 +13,38 @@ class GameController extends Controller
         'Food' => ['Pizza', 'Burger', 'Pasta', 'Sushi', 'Taco', 'Salad', 'Steak', 'Ice Cream', 'Sandwich']
     ];
 
+    private $hints = [
+        'lion' => 'King of the jungle, roars loudly',
+        'monkey' => 'Swings from trees and eats bananas',
+        'cat' => 'Purrs and has whiskers',
+        'dog' => 'Barks and wags its tail',
+        'elephant' => 'Has a long trunk and large ears',
+        'giraffe' => 'Tallest land animal with a long neck',
+        'zebra' => 'Black and white striped horse-like animal',
+        'kangaroo' => 'Australian animal that hops',
+        'panda' => 'Black and white bear that eats bamboo',
+        'dolphin' => 'Smart ocean mammal that squeaks',
+        'java' => 'Island in Indonesia, also a programming language',
+        'python' => 'Snake-like programming language',
+        'javascript' => 'Language for web browsers',
+        'ruby' => 'Red precious gemstone and a programming language',
+        'php' => 'Server-side scripting language for web',
+        'csharp' => 'Programming language by Microsoft (C#)',
+        'go' => 'Simple programming language created by Google',
+        'swift' => 'Fast programming language for Apple devices',
+        'kotlin' => 'Modern programming language for Java',
+        'rust' => 'Programming language known for safety and performance',
+        'pizza' => 'Italian dish with cheese and toppings on a round base',
+        'burger' => 'Sandwich with meat patty and buns',
+        'pasta' => 'Italian noodles, often served with sauce',
+        'sushi' => 'Japanese dish with rice and seafood',
+        'taco' => 'Mexican dish with meat in a shell',
+        'salad' => 'Dish with mixed vegetables',
+        'steak' => 'Grilled meat cut from beef',
+        'ice cream' => 'Cold sweet frozen dessert',
+        'sandwich' => 'Two slices of bread with filling between'
+    ];
+
     private $keyboardRows = [
         'row1' => ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
         'row2' => ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
@@ -163,6 +195,16 @@ class GameController extends Controller
         session(['hint' => $hint]);
     }
 
+    public function showHint()
+    {
+        $word = strtolower(session('word'));
+        $wordHint = $this->hints[$word] ?? 'No hint available for this word';
+        
+        session(['word_hint' => $wordHint]);
+        
+        return redirect()->route('game.index');
+    }
+
     public function reset()
     {
         $categoryName = array_rand($this->categories);
@@ -173,6 +215,9 @@ class GameController extends Controller
         $lives = session('lives', 3);
         $gameSessionId = session('game_session_id');
 
+        // Get the hint for this word
+        $wordHint = $this->hints[strtolower($word)] ?? 'No hint available';
+
         session([
             'word' => $word,
             'category' => $categoryName,
@@ -180,6 +225,7 @@ class GameController extends Controller
             'guessed_letters' => [],
             'incorrect_letters' => [],
             'mistakes' => 0,
+            'word_hint' => $wordHint,
             'lives' => $lives,
             'game_session_id' => $gameSessionId
         ]);

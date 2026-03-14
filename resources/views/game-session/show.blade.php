@@ -38,6 +38,14 @@
         @else
             <p class="text-gray-600 mb-2">Category: <span class="font-bold text-blue-600">{{ session('category') }}</span></p>
             
+            <!-- Hint Display -->
+            @if(session('word_hint'))
+                <div class="mb-4 p-3 bg-cyan-50 border-2 border-cyan-400 rounded">
+                    <p class="text-xs font-semibold text-cyan-700 mb-1">💡 Hint:</p>
+                    <p class="text-sm font-bold text-cyan-800">{{ session('word_hint') }}</p>
+                </div>
+            @endif
+            
             <!-- Lives Counter -->
             <div class="mb-4 p-3 bg-purple-50 rounded border-2 border-purple-200">
                 <p class="text-sm font-semibold text-purple-800">❤️ Lives: 
@@ -80,7 +88,19 @@
 
         <!-- Letter Guessing Section -->
         <div class="mb-6 border-t pt-6">
-            <h2 class="text-lg font-semibold mb-3 text-gray-700">Guess by Letter</h2>
+            <div class="flex gap-2 mb-3">
+                <h2 class="text-lg font-semibold text-gray-700 flex-1">Guess by Letter</h2>
+                @if(!session('hint_used'))
+                    <a href="{{ route('game.showHint') }}" 
+                       class="px-3 py-1 bg-cyan-500 text-white text-sm rounded hover:bg-cyan-600 transition font-semibold">
+                        💡 Get Hint
+                    </a>
+                @else
+                    <button disabled class="px-3 py-1 bg-gray-300 text-gray-600 text-sm rounded cursor-not-allowed font-semibold">
+                        ✓ Hint Used
+                    </button>
+                @endif
+            </div>
             
             @if(session('letterStatus'))
                 <div class="mb-3 p-2 text-green-600 font-semibold bg-green-50 rounded text-sm">

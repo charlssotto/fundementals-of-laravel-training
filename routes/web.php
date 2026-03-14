@@ -26,6 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/game', [App\Http\Controllers\GameController::class, 'index'])->name('game.index');
     Route::post('/guess', [App\Http\Controllers\GameController::class, 'guess'])->name('game.guess');
     Route::post('/guess-letter', [App\Http\Controllers\GameController::class, 'guessLetter'])->name('game.guessLetter');
+    Route::get('/hint', [App\Http\Controllers\GameController::class, 'showHint'])->name('game.showHint');
     Route::get('/reset', [App\Http\Controllers\GameController::class, 'reset'])->name('game.reset');
     Route::get('/logout', [App\Http\Controllers\LoginController::class, 'logout'])->name('logout');
 });
