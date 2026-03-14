@@ -20,6 +20,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/game-session', [App\Http\Controllers\GameSessionController::class, 'store'])->name('game.session.store');
     Route::get('/game-session/{gameSession}', [App\Http\Controllers\GameSessionController::class, 'show'])->name('game.session.show');
     Route::get('/game-session/{gameSession}/history', [App\Http\Controllers\GameSessionController::class, 'history'])->name('game.session.history');
+    Route::delete('/game-session/{gameSession}', [App\Http\Controllers\GameSessionController::class, 'destroy'])->name('game.session.destroy');
     
     // Game
     Route::get('/game', [App\Http\Controllers\GameController::class, 'index'])->name('game.index');

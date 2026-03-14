@@ -80,5 +80,19 @@ class GameSessionController extends Controller
         
         return view('game-session.history', compact('gameSession', 'gameHistory'));
     }
+
+    public function destroy(GameSession $gameSession)
+    {
+        // Check if user owns this game session
+        if (auth()->user()->id !== $gameSession->user_id) {
+            abort(403, 'Unauthorized to delete this game session.');
+        }
+
+        $name = $gameSession->name;
+        $gameSession->delete();
+
+        return redirect()->route('game.dashboard')
+                       ->with('success', 'Game session "' . $name . '" deleted successfully!');
+    }
 }
 

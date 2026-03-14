@@ -45,7 +45,7 @@ class GameSessionPolicy
      */
     public function delete(User $user, GameSession $gameSession): bool
     {
-        return false;
+        return $user->id === $gameSession->user_id;
     }
 
     /**
