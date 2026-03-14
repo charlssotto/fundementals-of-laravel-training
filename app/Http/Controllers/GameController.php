@@ -78,6 +78,21 @@ class GameController extends Controller
             // Check if word is complete
             $hint = session('hint');
             if (strpos($hint, '_') === false) {
+                // Word guessed correctly - save to history
+                if ($gameSessionId) {
+                    $gameSession = GameSession::find($gameSessionId);
+                    if ($gameSession) {
+                        $gameSession->addGameRound([
+                            'word' => session('word'),
+                            'category' => session('category'),
+                            'guessed_letters' => $guessedLetters,
+                            'incorrect_letters' => session('incorrect_letters', []),
+                            'mistakes' => session('mistakes', 0),
+                            'result' => 'won',
+                            'created_at' => now()
+                        ]);
+                    }
+                }
                 session()->flash('status', 'Correct! It was ' . session('word') . ' 🎉');
                 $this->reset();
             } else {
@@ -91,10 +106,21 @@ class GameController extends Controller
             session(['guessed_letters' => $guessedLetters, 'incorrect_letters' => $incorrectLetters, 'mistakes' => $mistakes]);
             
             if ($mistakes >= 6) {
-                // Deduct one life from game session
+                // Save losing round to history
                 if ($gameSessionId) {
                     $gameSession = GameSession::find($gameSessionId);
                     if ($gameSession) {
+                        $gameSession->addGameRound([
+                            'word' => session('word'),
+                            'category' => session('category'),
+                            'guessed_letters' => $guessedLetters,
+                            'incorrect_letters' => $incorrectLetters,
+                            'mistakes' => $mistakes,
+                            'result' => 'lost',
+                            'created_at' => now()
+                        ]);
+                        
+                        // Deduct one life from game session
                         $gameSession->deductLife();
                         $lives = $gameSession->lives;
                     }

@@ -20,7 +20,7 @@
                     + New Game Session
                 </a>
                 <a href="{{ route('logout') }}" 
-                   class="px-4 py-2 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition">
+                   class="px-6 py-3 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition">
                     Logout
                 </a>
             </div>
@@ -58,17 +58,23 @@
                         
                         <p class="text-sm text-gray-500 mb-4">Created: {{ $session->created_at->format('M d, Y') }}</p>
                         
-                        @if($session->lives > 0)
-                            <a href="{{ route('game.session.show', $session) }}" 
-                               class="inline-block w-full text-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition font-semibold">
-                                Play Session
+                        <div class="space-y-2">
+                            @if($session->lives > 0)
+                                <a href="{{ route('game.session.show', $session) }}" 
+                                   class="inline-block w-full text-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition font-semibold">
+                                    Play Session
+                                </a>
+                            @else
+                                <button disabled 
+                                        class="w-full px-4 py-2 bg-gray-300 text-gray-600 rounded cursor-not-allowed font-semibold">
+                                    Game Over - No Lives Left
+                                </button>
+                            @endif
+                            <a href="{{ route('game.session.history', $session) }}" 
+                               class="inline-block w-full text-center px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600 transition font-semibold">
+                                📊 History
                             </a>
-                        @else
-                            <button disabled 
-                                    class="w-full px-4 py-2 bg-gray-300 text-gray-600 rounded cursor-not-allowed font-semibold">
-                                Game Over - No Lives Left
-                            </button>
-                        @endif
+                        </div>
                     </div>
                 @endforeach
             </div>

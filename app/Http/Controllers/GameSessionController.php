@@ -68,5 +68,17 @@ class GameSessionController extends Controller
         
         return view('game-session.show', compact('gameSession'));
     }
+
+    public function history(GameSession $gameSession)
+    {
+        // Check if user owns this game session
+        if (auth()->user()->id !== $gameSession->user_id) {
+            abort(403, 'Unauthorized access to this game session.');
+        }
+
+        $gameHistory = $gameSession->game_history ?? [];
+        
+        return view('game-session.history', compact('gameSession', 'gameHistory'));
+    }
 }
 

@@ -5,7 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 class GameSession extends Model
 {
-    protected $fillable = ['user_id', 'name', 'status', 'lives', 'total_mistakes'];
+    protected $fillable = ['user_id', 'name', 'status', 'lives', 'total_mistakes', 'game_history'];
+    protected $casts = [
+        'game_history' => 'array'
+    ];
 
     public function user()
     {
@@ -35,6 +38,17 @@ class GameSession extends Model
     public function incrementMistakes(int $count = 1): void
     {
         $this->total_mistakes += $count;
+        $this->save();
+    }
+
+    /**
+     * Add a game round to the history
+     */
+    public function addGameRound(array $roundData): void
+    {
+        $history = $this->game_history ?? [];
+        $history[] = $roundData;
+        $this->game_history = $history;
         $this->save();
     }
 }
